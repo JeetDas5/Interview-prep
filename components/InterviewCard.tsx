@@ -1,9 +1,10 @@
 import React from "react";
 import dayjs from "dayjs";
 import Image from "next/image";
-import { getRandomInterviewCover } from "@/utils";
 import { Button } from "./ui/button";
 import Link from "next/link";
+import { getRandomInterviewCover } from "@/lib/utils";
+import DisplayTechIcons from "./DisplayTechIcons";
 
 const InterviewCard = ({
   interviewId,
@@ -56,8 +57,10 @@ const InterviewCard = ({
               "Youhaven't taken the interview yet. Take it now to improve your skills"}
           </p>
         </div>
+
         <div className="flex flex-row justify-between">
-          <p>Tech Icons</p>
+          <DisplayTechIcons techStack={techstack} />
+
           <Button className="btn-primary">
             <Link
               href={

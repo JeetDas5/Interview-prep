@@ -9,7 +9,7 @@ const monaSans = Mona_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "PrepWise",
+  title: "Interview Wise",
   description: "An AI powered platform for mock interviews",
 };
 
@@ -23,7 +23,7 @@ export default function RootLayout({
       <body className={`${monaSans.className} pattern antialiased`}>
         {children}
 
-        <Toaster/>
+        <Toaster />
       </body>
     </html>
   );
