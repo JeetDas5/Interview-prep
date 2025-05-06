@@ -8,6 +8,7 @@ import { generateObject } from "ai";
 export async function getInterviewByUserId(
   userId: string
 ): Promise<Interview[] | null> {
+  if (!userId) return null;
   const interviews = await db
     .collection("interviews")
     .where("userId", "==", userId)
