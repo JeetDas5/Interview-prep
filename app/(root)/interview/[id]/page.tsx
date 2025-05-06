@@ -9,7 +9,7 @@ import React from "react";
 
 const page = async ({ params }: RouteParams) => {
   const { id } = await params;
-  const user = getCurrentUser();
+  const user = await getCurrentUser();
   const interview = await getInterviewId(id);
 
   if (!interview) {
@@ -37,7 +37,7 @@ const page = async ({ params }: RouteParams) => {
         </p>
       </div>
       <Agent
-        userName={user?.name!}
+        userName={user?.name || ""}
         userId={user?.id}
         interviewId={id}
         type="interview"
