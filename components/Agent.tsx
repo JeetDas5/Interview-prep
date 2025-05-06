@@ -7,6 +7,7 @@ import React, { useEffect, useState } from "react";
 import { vapi } from "@/lib/vapi.sdk";
 import { interviewer } from "@/constants";
 import { createFeedback } from "@/lib/actions/general.actions";
+import { toast } from "sonner";
 
 enum CallStatus {
   INACTIVE = "INACTIVE",
@@ -49,7 +50,16 @@ const Agent = ({
     const onSpeachStart = () => setIsSpeaking(true);
     const onSpeechEnd = () => setIsSpeaking(false);
 
-    const onError = (error: Error) => console.error("Error:", error);
+    const onError = (error: Error) => {
+      if (
+        error?.message?.includes("Meeting has ended") ||
+        (error as any)?.errorMsg === "Meeting has ended"
+      ) {
+        toast.info("The meeting has ended.");
+      } else {
+        toast.error("Something went wrong.");
+      }
+    };
 
     vapi.on("call-start", onCallStart);
     vapi.on("call-end", onCallEnd);
@@ -69,7 +79,7 @@ const Agent = ({
   }, []);
 
   const handleGenerateFeedback = async (messages: SavedMessages[]) => {
-    console.log("Generating feedback...");
+    toast.info("Generating feedback...");
 
     const { success, feedbackId: id } = await createFeedback({
       interviewId: interviewId!,
@@ -79,7 +89,7 @@ const Agent = ({
     if (success && id) {
       router.push(`/interview/${interviewId}/feedback`);
     } else {
-      console.error("Failed to generate feedback");
+      toast.error("Failed to generate feedback");
       router.push("/");
     }
   };

@@ -65,7 +65,6 @@ const AuthForm = ({ type }: { type: FormType }) => {
 
         toast.success("Account created successfully! Please sign in.");
         router.push("/sign-in");
-        console.log("Sign Up", values);
       } else {
         const { email, password } = values;
         const userCredentials = await signInWithEmailAndPassword(
@@ -92,10 +91,8 @@ const AuthForm = ({ type }: { type: FormType }) => {
 
         toast.success("Signed in successfully!");
         router.push("/");
-        console.log("Sign In", values);
       }
     } catch (error) {
-      console.log(error);
       toast.error(`Something went wrong! ${error}`);
     }
   }
