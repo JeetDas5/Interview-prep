@@ -7,6 +7,8 @@ export const mappings = {
   react: "react",
   "next.js": "nextjs",
   nextjs: "nextjs",
+  python: "python",
+  django: "django",
   next: "nextjs",
   "vue.js": "vuejs",
   vuejs: "vuejs",
