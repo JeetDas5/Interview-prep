@@ -159,7 +159,7 @@ const Agent = ({
         <div className="card-border">
           <div className="card-content">
             <Image
-              src="/user-avatar.png"
+              src="/user.png"
               alt="user avatar"
               width={100}
               height={100}
@@ -199,7 +199,7 @@ const Agent = ({
           </button>
         ) : (
           <button className="btn-disconnect" onClick={handleDisconnect}>
-            <span>End Call</span>
+            <span className="cursor-pointer ">End Call</span>
           </button>
         )}
       </div>
