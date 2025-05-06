@@ -121,5 +121,26 @@ export async function isAuthenticated() {
   return !!user;
 }
 
+export async function signOut() {
+  try {
+    const cookieStore = await cookies();
+    cookieStore.set("session", "", {
+      maxAge: 0,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      sameSite: "lax",
+    });
 
-
+    return {
+      success: true,
+      message: "Signout successfully",
+    };
+  } catch (error) {
+    console.error("Error in signOut: ", error);
+    return {
+      success: false,
+      message: "Failed to sign out",
+    };
+  }
+}

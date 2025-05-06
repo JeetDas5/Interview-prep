@@ -16,19 +16,28 @@ import {
 } from "firebase/auth";
 import { auth } from "@/firebase/client";
 import { signIn, signUp } from "@/lib/actions/auth.actions";
+import { Loader } from "./Loader";
+import { useState } from "react";
 
 const authFormSchema = (type: FormType) => {
   return z.object({
     name:
       type === "sign-up"
-        ? z.string().min(3, "Name is required")
+        ? z.string().nonempty("Name is required").min(3, "Name is too short")
         : z.string().optional(),
-    email: z.string().email("Invalid email address"),
-    password: z.string().min(3, "Password is required"),
+    email: z
+      .string()
+      .nonempty("Email is required")
+      .email("Invalid email address"),
+    password: z
+      .string()
+      .nonempty("Password is required")
+      .min(6, "Password must be at least 6 characters long"),
   });
 };
 
 const AuthForm = ({ type }: { type: FormType }) => {
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const formSchema = authFormSchema(type);
   const form = useForm<z.infer<typeof formSchema>>({
@@ -42,6 +51,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
+      setIsLoading(true);
       if (type === "sign-up") {
         const { name, email, password } = values;
 
@@ -88,16 +98,33 @@ const AuthForm = ({ type }: { type: FormType }) => {
           toast.error(result.message);
           return;
         }
-
-        toast.success("Signed in successfully!");
+        toast.success("Signed in successfully! Redirecting to Home page...");
         router.push("/");
       }
-    } catch (error) {
-      toast.error(`Something went wrong! ${error}`);
+    } catch (error: any) {
+      if (error.code === "auth/invalid-credential") {
+        toast.error(
+          "Invalid credentials. Please check your email and password."
+        );
+      } else {
+        toast.error(`Something went wrong! ${error.message}`);
+      }
+    } finally {
+      setIsLoading(false);
     }
   }
 
   const isSignIn = type === "sign-in";
+
+  {
+    if (isLoading) {
+      return (
+        <div className="flex justify-center items-center h-screen">
+          <Loader message="loading..." />
+        </div>
+      );
+    }
+  }
 
   return (
     <div className="card-border lg:min-w-[550px]">

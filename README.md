@@ -54,7 +54,7 @@ vocify/
 ├── types/                           # TypeScript types and interfaces
 ├── public/                          # Static assets
 ├── styles/                          # Global styles (if any)
-├── .env.local                      # Environment variables
+├── .env.local                       # Environment variables
 ├── README.md
 ├── package.json
 └── tsconfig.json
