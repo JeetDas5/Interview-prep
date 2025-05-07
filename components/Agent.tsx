@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { vapi } from "@/lib/vapi.sdk";
 import { interviewer } from "@/constants";
-import { createFeedback } from "@/lib/actions/general.actions";
+import { createFeedback, updateInterviewStatus } from "@/lib/actions/general.actions";
 import { toast } from "sonner";
 
 enum CallStatus {
@@ -127,6 +127,13 @@ const Agent = ({
           questions: formattedQuestions,
         },
       });
+
+      const response = await updateInterviewStatus(interviewId!);
+      if (response.success) {
+        console.log("Interview started successfully!");
+      } else {
+        console.log("Failed to start interview.");
+      }
     }
   };
 

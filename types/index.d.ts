@@ -23,6 +23,7 @@ interface Interview {
   userId: string;
   type: string;
   finalized: boolean;
+  isAttempted?: boolean;
 }
 
 interface CreateFeedbackParams {
@@ -43,6 +44,7 @@ interface InterviewCardProps {
   userId?: string;
   role: string;
   type: string;
+  status?: "upcoming" | "completed";
   techstack: string[];
   createdAt?: string;
 }

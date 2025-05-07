@@ -24,6 +24,17 @@ const page = async ({ params }: RouteParams) => {
     userId: user?.id!,
   });
 
+  if (!feedback) {
+    return(
+      <div className="flex flex-col gap-4 justify-center items-center h-screen">
+        <Image src="/robot.png" width={200} height={200} alt="robot" />
+        <h1 className="text-2xl font-semibold">No feedback available</h1>
+        <p className="text-lg">Have you taken this interview?</p>
+      </div>
+    )
+  }
+
+  // console.log("feedback",feedback)
   return (
     <>
       <section className="section-feedback">
@@ -36,7 +47,6 @@ const page = async ({ params }: RouteParams) => {
 
         <div className="flex flex-row justify-center ">
           <div className="flex flex-row gap-5">
-            {/* Overall Impression */}
             <div className="flex flex-row gap-2 items-center">
               <Image src="/star.svg" width={22} height={22} alt="star" />
               <p>

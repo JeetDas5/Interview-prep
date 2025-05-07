@@ -20,8 +20,7 @@ const page = async () => {
     getLatestInterview({ userId: user?.id }),
   ]);
 
-  const hasPastInterviews = userInterviews?.length! > 0;
-  const hasUpcomingInterviews = latestInterviews?.length! > 0;
+  const upcomingInterviews = userInterviews?.length! > 0;
 
   return (
     <>
@@ -49,28 +48,40 @@ const page = async () => {
         />
       </section>
       <section className="flex flex-col gap-6 mt-8">
-        <h2>Your Interviews</h2>
+        <h2>Your Upcoming Interviews</h2>
         <div className="interviews-section">
-          {hasPastInterviews ? (
+          {upcomingInterviews ? (
             userInterviews?.map((interview) => (
-              <InterviewCard {...interview} key={interview.id} />
+              <InterviewCard
+                {...interview}
+                key={`${interview.id}-${interview.createdAt}`}
+                status="upcoming"
+              />
             ))
           ) : (
-            <p>You haven&apos;t taken any interviews yet</p>
+            <p>
+              You don't have any upcoming interviews. Let&apos;s generate one!
+            </p>
           )}
         </div>
       </section>
 
       <section className="flex flex-col gap-6 mt-8">
         {" "}
-        <h2>Take an Interview</h2>
+        <h2>Your Past Interviews</h2>
         <div className="interviews-section">
-          {hasUpcomingInterviews ? (
-            latestInterviews?.map((interview) => (
-              <InterviewCard {...interview} key={interview.id} />
-            ))
+          {upcomingInterviews ? (
+            userInterviews?.map(
+              (interview) =>
+                  <InterviewCard
+                    {...interview}
+                    key={`${interview.id}-${interview.createdAt}`}
+                    status="completed"
+                  />
+                
+            )
           ) : (
-            <p>There are no new interviewd available.</p>
+            <p>You don't taken interviews. Take an interview to get started!</p>
           )}
         </div>
       </section>

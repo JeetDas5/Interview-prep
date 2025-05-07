@@ -10,7 +10,7 @@ import React from "react";
 const page = async ({ params }: RouteParams) => {
   const { id } = await params;
   const user = await getCurrentUser();
-  const interview = await getInterviewId(id);
+  const interview = await getInterviewId(id);  
 
   if (!interview) {
     redirect("/");

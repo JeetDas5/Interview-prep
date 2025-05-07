@@ -24,7 +24,7 @@ export async function getInterviewByUserId(
 export async function getLatestInterview(
   params: GetLatestInterviewsParams
 ): Promise<Interview[] | null> {
-  const { userId, limit = 20 } = await params;
+  const { userId, limit = 6 } = params;
   const interviews = await db
     .collection("interviews")
     .where("finalized", "==", true)
@@ -130,5 +130,27 @@ export async function getFeedbackByInterviewId(
   } catch (error) {
     console.log("Error fetching feedback", error);
     return null;
+  }
+}
+
+//Update interview status isAttempted to true
+
+export async function updateInterviewStatus(
+  interviewId: string,
+) {
+  try {
+    await db.collection("interviews").doc(interviewId).update({
+      isAttempted: true,
+    });
+    return{
+      success: true,
+      message: "Interview status updated successfully",
+    }
+  } catch (error) {
+    console.log("Error updating interview status", error);
+    return {
+      success: false,
+      message: "Error updating interview status",
+    }
   }
 }
