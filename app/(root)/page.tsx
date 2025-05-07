@@ -11,10 +11,13 @@ import {
 
 const page = async () => {
   const user = await getCurrentUser();
+  if (!user) {
+    return null;
+  }
 
   const [userInterviews, latestInterviews] = await Promise.all([
-    await getInterviewByUserId(user?.id!),
-    await getLatestInterview({ userId: user?.id! }),
+    getInterviewByUserId(user?.id),
+    getLatestInterview({ userId: user?.id }),
   ]);
 
   const hasPastInterviews = userInterviews?.length! > 0;
