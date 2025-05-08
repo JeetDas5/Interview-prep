@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { vapi } from "@/lib/vapi.sdk";
 import { interviewer } from "@/constants";
-import { createFeedback, updateInterviewStatus } from "@/lib/actions/general.actions";
+import { createFeedback } from "@/lib/actions/general.actions";
 import { toast } from "sonner";
 
 enum CallStatus {
@@ -51,15 +51,15 @@ const Agent = ({
     const onSpeechEnd = () => setIsSpeaking(false);
 
     const onError = (error: Error) => {
-      if (
-        error?.message?.includes("Meeting has ended") ||
-        (error as any)?.errorMsg === "Meeting has ended"
-      ) {
+      const message = error?.message || (error as any)?.errorMsg || "";
+    
+      if (message.includes("Meeting has ended")) {
         toast.info("The meeting has ended.");
-      } else {
-        toast.error("Something went wrong.");
+        return;
       }
+      toast.error("Something went wrong.");
     };
+    
 
     vapi.on("call-start", onCallStart);
     vapi.on("call-end", onCallEnd);
@@ -128,12 +128,7 @@ const Agent = ({
         },
       });
 
-      const response = await updateInterviewStatus(interviewId!);
-      if (response.success) {
-        console.log("Interview started successfully!");
-      } else {
-        console.log("Failed to start interview.");
-      }
+      
     }
   };
 

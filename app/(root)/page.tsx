@@ -6,7 +6,8 @@ import InterviewCard from "@/components/InterviewCard";
 import { getCurrentUser } from "@/lib/actions/auth.actions";
 import {
   getInterviewByUserId,
-  getLatestInterview,
+  getInterviewsWithFeedback,
+  getInterviewsWithoutFeedback,
 } from "@/lib/actions/general.actions";
 
 const page = async () => {
@@ -15,12 +16,15 @@ const page = async () => {
     return null;
   }
 
-  const [userInterviews, latestInterviews] = await Promise.all([
-    getInterviewByUserId(user?.id),
-    getLatestInterview({ userId: user?.id }),
-  ]);
+  const [userInterviews, upcomingInterviews, pastInterviews] =
+    await Promise.all([
+      getInterviewByUserId(user?.id),
+      getInterviewsWithoutFeedback(user?.id),
+      getInterviewsWithFeedback(user?.id),
+    ]);
 
-  const upcomingInterviews = userInterviews?.length! > 0;
+  const isUpcomingInterviews = upcomingInterviews?.length! > 0;
+  const isPastInterviews = pastInterviews?.length! > 0;
 
   return (
     <>
@@ -50,12 +54,11 @@ const page = async () => {
       <section className="flex flex-col gap-6 mt-8">
         <h2>Your Upcoming Interviews</h2>
         <div className="interviews-section">
-          {upcomingInterviews ? (
-            userInterviews?.map((interview) => (
+          {isUpcomingInterviews ? (
+            upcomingInterviews?.map((interview) => (
               <InterviewCard
                 {...interview}
                 key={`${interview.id}-${interview.createdAt}`}
-                status="upcoming"
               />
             ))
           ) : (
@@ -70,16 +73,13 @@ const page = async () => {
         {" "}
         <h2>Your Past Interviews</h2>
         <div className="interviews-section">
-          {upcomingInterviews ? (
-            userInterviews?.map(
-              (interview) =>
-                  <InterviewCard
-                    {...interview}
-                    key={`${interview.id}-${interview.createdAt}`}
-                    status="completed"
-                  />
-                
-            )
+          {isPastInterviews ? (
+            pastInterviews?.map((interview) => (
+              <InterviewCard
+                {...interview}
+                key={`${interview.id}-${interview.createdAt}`}
+              />
+            ))
           ) : (
             <p>You don't taken interviews. Take an interview to get started!</p>
           )}

@@ -14,7 +14,6 @@ const InterviewCard = async ({
   type,
   techstack,
   createdAt,
-  status,
 }: InterviewCardProps) => {
   const feedback =
     userId && id
@@ -24,9 +23,6 @@ const InterviewCard = async ({
   const formattedDate = dayjs(
     feedback?.createdAt || createdAt || Date.now()
   ).format("DD/MM/YYYY");
-
-  const isUpcoming = status === "upcoming";
-
 
   return (
     <div className="card-border w-[360px] max-sm:w-full min-h-96">
@@ -57,15 +53,12 @@ const InterviewCard = async ({
 
             <div className="flex flex-row gap-2 items-center">
               <Image src="star.svg" alt="star" width={22} height={22} />
-              {!isUpcoming ? <p>{feedback?.totalScore}/100</p> : <p>---/100</p>}
+              <p>{feedback?.totalScore || "---"}/100</p>
             </div>
           </div>
           <p className="line-clamp-2 mt-5">
-            {!isUpcoming
-              ? feedback
-                ? feedback.finalAssessment
-                : "Feedback not available"
-              : "Feedback will be available after the interview is completed"}
+            {feedback?.finalAssessment ||
+              "You haven't taken the interview yet. Take it now to improve your skills"}
           </p>
         </div>
 
@@ -73,15 +66,12 @@ const InterviewCard = async ({
           <DisplayTechIcons techStack={techstack} />
 
           <Button className="btn-primary">
-            {!isUpcoming ? (
-              <Link className="text-white" href={`/interview/${id}/feedback`}>
-                View Feedback
-              </Link>
-            ) : (
-              <Link className="text-white" href={`/interview/${id}`}>
-                Take Interview
-              </Link>
-            )}
+            <Link
+              href={feedback ? `/interview/${id}/feedback` : `/interview/${id}`}
+              className="text-white"
+            >
+              {feedback ? "Check Feedback" : "View Interview"}
+            </Link>
           </Button>
         </div>
       </div>

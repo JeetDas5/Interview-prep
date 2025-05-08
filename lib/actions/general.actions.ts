@@ -21,22 +21,22 @@ export async function getInterviewByUserId(
   })) as Interview[];
 }
 
-export async function getLatestInterview(
-  params: GetLatestInterviewsParams
-): Promise<Interview[] | null> {
-  const { userId, limit = 6 } = params;
-  const interviews = await db
-    .collection("interviews")
-    .where("finalized", "==", true)
-    .where("userId", "!=", userId)
-    .limit(limit)
-    .get();
+// export async function getLatestInterview(
+//   params: GetLatestInterviewsParams
+// ): Promise<Interview[] | null> {
+//   const { userId, limit = 6 } = params;
+//   const interviews = await db
+//     .collection("interviews")
+//     .where("finalized", "==", true)
+//     .where("userId", "!=", userId)
+//     .limit(limit)
+//     .get();
 
-  return interviews.docs.map((doc) => ({
-    ...doc.data(),
-    id: doc.id,
-  })) as Interview[];
-}
+//   return interviews.docs.map((doc) => ({
+//     ...doc.data(),
+//     id: doc.id,
+//   })) as Interview[];
+// }
 
 export async function getInterviewId(id: string): Promise<Interview | null> {
   const interview = await db.collection("interviews").doc(id).get();
@@ -133,24 +133,90 @@ export async function getFeedbackByInterviewId(
   }
 }
 
-//Update interview status isAttempted to true
+//Get those interviews that have feedback
+export async function getInterviewsWithFeedback(
+  userId: string
+): Promise<Interview[] | null> {
+  if (!userId) return null;
 
-export async function updateInterviewStatus(
-  interviewId: string,
-) {
   try {
-    await db.collection("interviews").doc(interviewId).update({
-      isAttempted: true,
-    });
-    return{
-      success: true,
-      message: "Interview status updated successfully",
+    const interviewsSnapshot = await db
+      .collection("interviews")
+      .where("userId", "==", userId)
+      .where("finalized", "==", true)
+      .get();
+
+    if (interviewsSnapshot.empty) return [];
+
+    const interviewDocs = interviewsSnapshot.docs;
+
+    const interviewsWithFeedback: Interview[] = [];
+
+    for (const doc of interviewDocs) {
+      const interview = {
+        ...doc.data(),
+        id: doc.id,
+      } as Interview;
+
+      const feedbackSnapshot = await db
+        .collection("feedback")
+        .where("interviewId", "==", interview.id)
+        .where("userId", "==", userId)
+        .limit(1)
+        .get();
+
+      if (!feedbackSnapshot.empty) {
+        interviewsWithFeedback.push(interview);
+      }
     }
+
+    return interviewsWithFeedback;
   } catch (error) {
-    console.log("Error updating interview status", error);
-    return {
-      success: false,
-      message: "Error updating interview status",
+    console.error("Error fetching interviews with feedback:", error);
+    return null;
+  }
+}
+
+//Interviews without feedback
+export async function getInterviewsWithoutFeedback(
+  userId: string
+): Promise<Interview[] | null> {
+  if (!userId) return null;
+
+  try {
+    const interviewsSnapshot = await db
+      .collection("interviews")
+      .where("userId", "==", userId)
+      .where("finalized", "==", true)
+      .get();
+
+    if (interviewsSnapshot.empty) return [];
+
+    const interviewDocs = interviewsSnapshot.docs;
+
+    const interviewsWithoutFeedback: Interview[] = [];
+
+    for (const doc of interviewDocs) {
+      const interview = {
+        ...doc.data(),
+        id: doc.id,
+      } as Interview;
+
+      const feedbackSnapshot = await db
+        .collection("feedback")
+        .where("interviewId", "==", interview.id)
+        .where("userId", "==", userId)
+        .limit(1)
+        .get();
+
+      if (feedbackSnapshot.empty) {
+        interviewsWithoutFeedback.push(interview);
+      }
     }
+
+    return interviewsWithoutFeedback;
+  } catch (error) {
+    console.error("Error fetching interviews without feedback:", error);
+    return null;
   }
 }
