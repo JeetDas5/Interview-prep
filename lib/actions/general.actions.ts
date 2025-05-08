@@ -117,6 +117,7 @@ export async function getFeedbackByInterviewId(
       .collection("feedback")
       .where("interviewId", "==", interviewId)
       .where("userId", "==", userId)
+      .orderBy("createdAt", "desc")
       .limit(1)
       .get();
 
@@ -162,6 +163,7 @@ export async function getInterviewsWithFeedback(
         .collection("feedback")
         .where("interviewId", "==", interview.id)
         .where("userId", "==", userId)
+        .orderBy("createdAt", "desc")
         .limit(1)
         .get();
 
